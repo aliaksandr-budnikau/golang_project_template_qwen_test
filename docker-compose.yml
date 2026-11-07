@@ -14,5 +14,8 @@ services:
       SERVICE_HTTP_ADDR: ":8080"
       SERVICE_GRPC_ADDR: ":9090"
       SERVICE_GRPC_ENABLED: "false"
+      # Dev-only: serves the Swagger UI at /swagger. Left unset in production,
+      # where the service exposes no documentation surface.
+      SERVICE_SWAGGER_ENABLED: "true"
       SERVICE_LOG_LEVEL: info
     restart: unless-stopped

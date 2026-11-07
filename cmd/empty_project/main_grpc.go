@@ -19,6 +19,7 @@ import (
 	"github.com/yourname/empty_project/internal/infrastructure/persistence"
 	grpcserver "github.com/yourname/empty_project/internal/server/grpc"
 	httpserver "github.com/yourname/empty_project/internal/server/http"
+	"github.com/yourname/empty_project/internal/server/http/swagger"
 	"github.com/yourname/empty_project/internal/telemetry"
 	grpcsvc "github.com/yourname/empty_project/internal/transport/grpc"
 	"github.com/yourname/empty_project/internal/transport/http/handlers"
@@ -49,7 +50,11 @@ func runGRPC() error {
 	// HTTP.
 	health := handlers.NewHealthHandler()
 	ping := handlers.NewPingHandler(useCase)
-	httpHandler := httpserver.NewRouter(logger, &httpserver.Routes{Health: health, Ping: ping})
+	routes := &httpserver.Routes{Health: health, Ping: ping}
+	if cfg.Swagger.Enabled {
+		routes.Swagger = swagger.Handler()
+	}
+	httpHandler := httpserver.NewRouter(logger, routes)
 	httpSrv := httpserver.NewServer(cfg.HTTP.Addr, httpHandler)
 
 	// gRPC.

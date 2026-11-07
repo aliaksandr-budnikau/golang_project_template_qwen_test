@@ -12,6 +12,7 @@ type Config struct {
 	ServiceName string
 	HTTP        HTTPConfig
 	GRPC        GRPCConfig
+	Swagger     SwaggerConfig
 	LogLevel    string
 }
 
@@ -30,16 +31,28 @@ type GRPCConfig struct {
 	Addr string
 }
 
+// SwaggerConfig configures the in-process Swagger UI.
+//
+// The UI is disabled by default so production builds expose no documentation
+// surface; enable it for local development (e.g. docker compose) by setting
+// SERVICE_SWAGGER_ENABLED=true.
+type SwaggerConfig struct {
+	// Enabled reports whether the Swagger UI and OpenAPI spec are served at
+	// /swagger and /swagger/openapi.yaml.
+	Enabled bool
+}
+
 // Load reads configuration from the environment, applying defaults for unset
 // values.
 //
 // Recognised environment variables:
 //
-//	SERVICE_NAME         (default "empty_project")
-//	SERVICE_HTTP_ADDR    (default ":8080")
-//	SERVICE_GRPC_ADDR    (default ":9090")
-//	SERVICE_GRPC_ENABLED (default "false")
-//	SERVICE_LOG_LEVEL    (default "info")
+//	SERVICE_NAME          (default "empty_project")
+//	SERVICE_HTTP_ADDR     (default ":8080")
+//	SERVICE_GRPC_ADDR     (default ":9090")
+//	SERVICE_GRPC_ENABLED  (default "false")
+//	SERVICE_SWAGGER_ENABLED (default "false")
+//	SERVICE_LOG_LEVEL     (default "info")
 func Load() (Config, error) {
 	cfg := Config{
 		ServiceName: getenv("SERVICE_NAME", "empty_project"),
@@ -53,6 +66,14 @@ func Load() (Config, error) {
 		cfg.GRPC.Enabled, err = strconv.ParseBool(enabled)
 		if err != nil {
 			return Config{}, fmt.Errorf("invalid SERVICE_GRPC_ENABLED %q: %w", enabled, err)
+		}
+	}
+
+	if enabled := getenv("SERVICE_SWAGGER_ENABLED", "false"); enabled != "" {
+		var err error
+		cfg.Swagger.Enabled, err = strconv.ParseBool(enabled)
+		if err != nil {
+			return Config{}, fmt.Errorf("invalid SERVICE_SWAGGER_ENABLED %q: %w", enabled, err)
 		}
 	}
 

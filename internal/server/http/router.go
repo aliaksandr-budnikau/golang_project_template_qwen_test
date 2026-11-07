@@ -12,9 +12,14 @@ import (
 )
 
 // Routes holds the handlers wired into the router.
+//
+// Swagger is optional: when non-nil it mounts the Swagger UI and OpenAPI spec at
+// /swagger and /swagger/openapi.yaml (set by the composition root only when
+// SERVICE_SWAGGER_ENABLED is on).
 type Routes struct {
-	Health *handlers.HealthHandler
-	Ping   *handlers.PingHandler
+	Health  *handlers.HealthHandler
+	Ping    *handlers.PingHandler
+	Swagger http.Handler
 }
 
 // NewRouter builds the HTTP handler: the middleware chain wrapping a
@@ -26,6 +31,11 @@ func NewRouter(logger *slog.Logger, r *Routes) http.Handler {
 	mux.HandleFunc("GET /healthz", r.Health.Liveness)
 	mux.HandleFunc("GET /readyz", r.Health.Readiness)
 	mux.HandleFunc("GET /ping", r.Ping.Ping)
+
+	if r.Swagger != nil {
+		mux.Handle("/swagger", r.Swagger)
+		mux.Handle("/swagger/", r.Swagger)
+	}
 
 	var h http.Handler = mux
 	h = middleware.Logging(logger)(h)

@@ -7,7 +7,7 @@ func TestLoadDefaults(t *testing.T) {
 	// every variable empty yields the documented defaults.
 	for _, k := range []string{
 		"SERVICE_NAME", "SERVICE_HTTP_ADDR", "SERVICE_GRPC_ADDR",
-		"SERVICE_GRPC_ENABLED", "SERVICE_LOG_LEVEL",
+		"SERVICE_GRPC_ENABLED", "SERVICE_SWAGGER_ENABLED", "SERVICE_LOG_LEVEL",
 	} {
 		t.Setenv(k, "")
 	}
@@ -29,6 +29,9 @@ func TestLoadDefaults(t *testing.T) {
 	if cfg.GRPC.Enabled {
 		t.Errorf("GRPC.Enabled = true, want false")
 	}
+	if cfg.Swagger.Enabled {
+		t.Errorf("Swagger.Enabled = true, want false (off by default)")
+	}
 	if cfg.LogLevel != "info" {
 		t.Errorf("LogLevel = %q, want %q", cfg.LogLevel, "info")
 	}
@@ -39,6 +42,7 @@ func TestLoadOverrides(t *testing.T) {
 	t.Setenv("SERVICE_HTTP_ADDR", ":9000")
 	t.Setenv("SERVICE_GRPC_ADDR", ":9091")
 	t.Setenv("SERVICE_GRPC_ENABLED", "true")
+	t.Setenv("SERVICE_SWAGGER_ENABLED", "true")
 	t.Setenv("SERVICE_LOG_LEVEL", "debug")
 
 	cfg, err := Load()
@@ -58,6 +62,9 @@ func TestLoadOverrides(t *testing.T) {
 	if !cfg.GRPC.Enabled {
 		t.Errorf("GRPC.Enabled = false, want true")
 	}
+	if !cfg.Swagger.Enabled {
+		t.Errorf("Swagger.Enabled = false, want true")
+	}
 	if cfg.LogLevel != "debug" {
 		t.Errorf("LogLevel = %q, want %q", cfg.LogLevel, "debug")
 	}
@@ -67,5 +74,12 @@ func TestLoadInvalidGrpcEnabled(t *testing.T) {
 	t.Setenv("SERVICE_GRPC_ENABLED", "notabool")
 	if _, err := Load(); err == nil {
 		t.Fatalf("Load() expected an error for invalid SERVICE_GRPC_ENABLED, got nil")
+	}
+}
+
+func TestLoadInvalidSwaggerEnabled(t *testing.T) {
+	t.Setenv("SERVICE_SWAGGER_ENABLED", "notabool")
+	if _, err := Load(); err == nil {
+		t.Fatalf("Load() expected an error for invalid SERVICE_SWAGGER_ENABLED, got nil")
 	}
 }

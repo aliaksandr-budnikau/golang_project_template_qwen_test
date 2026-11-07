@@ -22,6 +22,7 @@ import (
 	"github.com/yourname/empty_project/internal/config"
 	"github.com/yourname/empty_project/internal/infrastructure/persistence"
 	httpserver "github.com/yourname/empty_project/internal/server/http"
+	"github.com/yourname/empty_project/internal/server/http/swagger"
 	"github.com/yourname/empty_project/internal/telemetry"
 	"github.com/yourname/empty_project/internal/transport/http/handlers"
 )
@@ -52,10 +53,11 @@ func run() error {
 	health := handlers.NewHealthHandler()
 	ping := handlers.NewPingHandler(useCase)
 
-	handler := httpserver.NewRouter(logger, &httpserver.Routes{
-		Health: health,
-		Ping:   ping,
-	})
+	routes := &httpserver.Routes{Health: health, Ping: ping}
+	if cfg.Swagger.Enabled {
+		routes.Swagger = swagger.Handler()
+	}
+	handler := httpserver.NewRouter(logger, routes)
 	srv := httpserver.NewServer(cfg.HTTP.Addr, handler)
 
 	// --- Run with graceful shutdown on SIGINT / SIGTERM. ---

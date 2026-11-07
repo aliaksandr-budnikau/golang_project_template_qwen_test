@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>empty_project — API</title>
+    <!--
+      Thin mount for the third-party Swagger UI. All JSON -> UI rendering is done
+      by swagger-ui (loaded from a CDN); this page only provides the mount point
+      and points it at the same-origin spec served by the app.
+    -->
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+      const url = new URLSearchParams(location.search).get("url") || "openapi.yaml";
+      window.ui = SwaggerUIBundle({ url, dom_id: "#swagger-ui" });
+    </script>
+  </body>
+</html>
