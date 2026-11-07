@@ -1,0 +1,20 @@
+# Build artifacts
+/bin/
+/out/
+*.test
+coverage.out
+coverage.html
+
+# VCS
+.git
+.gitignore
+
+# Docs, tests, and local dev tooling (not needed in the image)
+docs/
+test/
+.claude/
+*.md
+!README.md
+
+# Generated code (regenerated in-image only when building with -tags grpc)
+api/proto/**/*.pb.go

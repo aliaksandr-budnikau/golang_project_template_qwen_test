@@ -1,0 +1,118 @@
+# REST contract for empty_project (OpenAPI 3.0).
+#
+# This is the single source of truth for the HTTP/REST surface. Handlers in
+# internal/transport/http/handlers must stay in sync with it; the api-designer
+# agent (`.claude/agents/api-designer.md`) reviews changes here.
+#
+# NOTE: the sample domain entity (internal/domain/entity.go) currently has no
+# JSON tags, so the running service emits PascalCase field names (ID, Name).
+# The project convention is camelCase in JSON — add json tags to Item when it is
+# made real and update this schema to match.
+
+openapi: 3.0.3
+info:
+  title: empty_project API
+  description: >-
+    Best-practice scaffold for a Go HTTP/REST microservice. The default build is
+    HTTP-only and dependency-free; the gRPC surface is documented separately in
+    api/proto/v1/service.proto.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development (SERVICE_HTTP_ADDR default)
+
+tags:
+  - name: meta
+    description: Service liveness, readiness, and smoke tests.
+
+paths:
+  /healthz:
+    get:
+      tags: [meta]
+      operationId: liveness
+      summary: Liveness probe — the process is alive.
+      responses:
+        "200":
+          description: The service is alive.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+  /readyz:
+    get:
+      tags: [meta]
+      operationId: readiness
+      summary: Readiness probe — the service can accept traffic.
+      responses:
+        "200":
+          description: The service is ready.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+  /ping:
+    get:
+      tags: [meta]
+      operationId: ping
+      summary: Smoke test — stores a sample item and echoes it back.
+      responses:
+        "200":
+          description: The item was stored and retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingResponse'
+        "500":
+          description: The use case failed to store or retrieve the item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Liveness:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          const: ok
+    Readiness:
+      type: object
+      required: [status, startedAt, uptime]
+      properties:
+        status:
+          type: string
+          const: ready
+        startedAt:
+          type: string
+          format: date-time
+          description: RFC 3339 UTC time the process started.
+        uptime:
+          type: string
+          description: Go duration string, e.g. "1m2s".
+    PingResponse:
+      type: object
+      required: [status, item]
+      properties:
+        status:
+          type: string
+          const: ok
+        item:
+          $ref: '#/components/schemas/Item'
+    Item:
+      type: object
+      required: [ID, Name]
+      properties:
+        # PascalCase because Item has no JSON tags yet; see the note at the top.
+        ID:
+          type: string
+        Name:
+          type: string
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string

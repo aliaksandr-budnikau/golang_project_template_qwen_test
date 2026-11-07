@@ -1,0 +1,26 @@
+# Binaries
+/bin/
+/out/
+*.exe
+*.test
+
+# Build cache / coverage
+coverage.out
+coverage.html
+*.cover
+
+# Vendors (only if you start vendoring)
+/vendor/
+
+# Generated protobuf / gRPC code
+api/proto/**/*.pb.go
+
+# Local & IDE
+.claude/settings.local.json
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Backups
+*.bak

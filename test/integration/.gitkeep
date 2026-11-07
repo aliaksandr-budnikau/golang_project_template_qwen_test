@@ -1,0 +1,6 @@
+# Integration / end-to-end tests live in this package.
+# Run them with:  go test ./test/...
+#
+# Example: spin up the HTTP server on a random port, exercise /healthz and
+# /ping, and assert the responses. See the `httptest`-based unit tests in
+# internal/transport/http/handlers for the pattern.

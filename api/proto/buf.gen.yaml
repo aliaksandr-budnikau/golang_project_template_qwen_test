@@ -1,0 +1,13 @@
+version: v2
+
+plugins:
+  - local:
+      path: buf-protoc-gen-go
+    out: v1
+    opt:
+      - paths=source_relative
+  - local:
+      path: buf-protoc-gen-go-grpc
+    out: v1
+    opt:
+      - paths=source_relative

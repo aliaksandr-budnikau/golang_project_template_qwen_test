@@ -1,0 +1,18 @@
+name: empty_project
+
+services:
+  empty_project:
+    build:
+      context: .
+      dockerfile: build/docker/Dockerfile
+    image: empty_project:latest
+    ports:
+      - "8080:8080"   # HTTP/REST
+      - "9090:9090"   # gRPC (used when built with -tags grpc)
+    environment:
+      SERVICE_NAME: empty_project
+      SERVICE_HTTP_ADDR: ":8080"
+      SERVICE_GRPC_ADDR: ":9090"
+      SERVICE_GRPC_ENABLED: "false"
+      SERVICE_LOG_LEVEL: info
+    restart: unless-stopped
