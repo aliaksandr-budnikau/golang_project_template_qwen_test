@@ -53,7 +53,7 @@ func runGRPC() error {
 	httpSrv := httpserver.NewServer(cfg.HTTP.Addr, httpHandler)
 
 	// gRPC.
-	grpcSrv, err := grpcserver.NewServer(cfg.GRPC.Addr)
+	grpcSrv, err := grpcserver.NewServer(cfg.GRPC.Addr, grpcserver.WithRecovery(logger))
 	if err != nil {
 		return err
 	}
