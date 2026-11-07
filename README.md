@@ -44,7 +44,7 @@ internal/
     http/                 handlers + middleware
     grpc/                 gRPC service implementations (build-tagged)
   server/
-    http/                 router + server lifecycle
+    http/                 router + server lifecycle (+ opt-in Swagger UI)
     grpc/                 gRPC server wrapper (build-tagged)
 pkg/                      reusable, importable code
 api/
@@ -69,7 +69,23 @@ All configuration comes from the environment (defaults in parentheses):
 | `SERVICE_HTTP_ADDR`    | `:8080`         | HTTP listen address         |
 | `SERVICE_GRPC_ADDR`    | `:9090`         | gRPC listen address         |
 | `SERVICE_GRPC_ENABLED` | `false`         | start the gRPC server       |
+| `SERVICE_SWAGGER_ENABLED` | `false`     | serve the Swagger UI at `/swagger` |
 | `SERVICE_LOG_LEVEL`    | `info`          | `debug`/`info`/`warn`/`error` |
+
+## Swagger UI
+
+A Swagger UI is served in-process at `/swagger`, so the REST surface can be
+explored and run without a client. It is **off by default** — production exposes
+no documentation surface — and enabled with `SERVICE_SWAGGER_ENABLED=true`.
+
+```sh
+make docker-run      # docker compose enables it, so the UI is on locally
+# open http://localhost:8080/swagger
+```
+
+The UI is a thin mount for the third-party
+[swagger-ui](https://github.com/swagger-api/swagger-ui); the OpenAPI spec is
+embedded from `api/openapi/openapi.yaml` (refresh the copy with `make generate`).
 
 ## gRPC (opt-in)
 

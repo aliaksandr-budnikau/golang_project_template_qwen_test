@@ -95,7 +95,11 @@ architecture. Dependencies point **inward**:
 │   │   │   └── server_default.go    # //go:build !grpc       no-op stub (keeps default build green)
 │   │   └── http/
 │   │       ├── router.go       #     middleware chain + method-aware mux
-│   │       └── server.go       #     graceful-shutdown wrapper
+│   │       ├── server.go       #     graceful-shutdown wrapper
+│   │       └── swagger/        #     opt-in Swagger UI (go:embed; on when SERVICE_SWAGGER_ENABLED=true)
+│   │           ├── swagger.go  #       handler: /swagger UI + /swagger/openapi.yaml
+│   │           ├── ui.html     #       thin mount; third-party swagger-ui renders the spec
+│   │           └── openapi.yaml#       embedded copy of api/openapi/openapi.yaml (refresh: make generate)
 │   ├── telemetry/
 │   │   └── logger.go           #   structured logging (slog)
 │   └── transport/              # protocol boundaries (thin: translate to/from application)
