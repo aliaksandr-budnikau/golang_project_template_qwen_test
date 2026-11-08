@@ -16,7 +16,7 @@ info:
     Best-practice scaffold for a Go HTTP/REST microservice. The default build is
     HTTP-only and dependency-free; the gRPC surface is documented separately in
     api/proto/v1/service.proto.
-  version: 1.0.0
+  version: 1.1.0
 servers:
   - url: http://localhost:8080
     description: Local development (SERVICE_HTTP_ADDR default)
@@ -68,6 +68,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /random:
+    get:
+      tags: [meta]
+      operationId: random
+      summary: Smoke test — imitates ~1s of work and returns a random number.
+      description: >-
+        Blocks for roughly one second (the request context is honoured) and
+        answers with a random integer in [1, 154], inclusive. Responses are
+        marked `Cache-Control: no-store` — each call returns a fresh value.
+        This is not a health probe; do not poll it.
+      responses:
+        "200":
+          description: A random number was produced.
+          headers:
+            Cache-Control:
+              description: Always `no-store`.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RandomResponse'
+        "500":
+          description: The use case failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -101,6 +129,18 @@ components:
           const: ok
         item:
           $ref: '#/components/schemas/Item'
+    RandomResponse:
+      type: object
+      required: [status, number]
+      properties:
+        status:
+          type: string
+          const: ok
+        number:
+          type: integer
+          minimum: 1
+          maximum: 154
+          description: Random integer in [1, 154], both bounds inclusive.
     Item:
       type: object
       required: [ID, Name]

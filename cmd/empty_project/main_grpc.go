@@ -46,11 +46,13 @@ func runGRPC() error {
 	// --- Composition root ---
 	repo := persistence.NewMemoryRepo()
 	useCase := application.NewUseCase(repo)
+	randomUseCase := application.NewRandomUseCase()
 
 	// HTTP.
 	health := handlers.NewHealthHandler()
 	ping := handlers.NewPingHandler(useCase)
-	routes := &httpserver.Routes{Health: health, Ping: ping}
+	random := handlers.NewRandomHandler(randomUseCase)
+	routes := &httpserver.Routes{Health: health, Ping: ping, Random: random}
 	if cfg.Swagger.Enabled {
 		routes.Swagger = swagger.Handler()
 	}

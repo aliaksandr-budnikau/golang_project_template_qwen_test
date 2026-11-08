@@ -49,11 +49,13 @@ func run() error {
 	// --- Composition root: construct concrete types and wire them together. ---
 	repo := persistence.NewMemoryRepo()
 	useCase := application.NewUseCase(repo)
+	randomUseCase := application.NewRandomUseCase()
 
 	health := handlers.NewHealthHandler()
 	ping := handlers.NewPingHandler(useCase)
+	random := handlers.NewRandomHandler(randomUseCase)
 
-	routes := &httpserver.Routes{Health: health, Ping: ping}
+	routes := &httpserver.Routes{Health: health, Ping: ping, Random: random}
 	if cfg.Swagger.Enabled {
 		routes.Swagger = swagger.Handler()
 	}

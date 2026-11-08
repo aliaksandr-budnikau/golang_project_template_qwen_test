@@ -19,6 +19,7 @@ import (
 type Routes struct {
 	Health  *handlers.HealthHandler
 	Ping    *handlers.PingHandler
+	Random  *handlers.RandomHandler
 	Swagger http.Handler
 }
 
@@ -31,6 +32,7 @@ func NewRouter(logger *slog.Logger, r *Routes) http.Handler {
 	mux.HandleFunc("GET /healthz", r.Health.Liveness)
 	mux.HandleFunc("GET /readyz", r.Health.Readiness)
 	mux.HandleFunc("GET /ping", r.Ping.Ping)
+	mux.HandleFunc("GET /random", r.Random.Random)
 
 	if r.Swagger != nil {
 		mux.Handle("/swagger", r.Swagger)
