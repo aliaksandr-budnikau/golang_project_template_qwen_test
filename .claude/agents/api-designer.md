@@ -21,3 +21,11 @@ an API, check:
 
 Then update the relevant contract file(s) and note any breaking changes in a new
 `docs/adr/` record.
+
+**After any change to `api/openapi/openapi.yaml`**, the Swagger UI serves a copy
+embedded at build time in `internal/server/http/swagger/openapi.yaml`, so a
+contract change is invisible at `/swagger` until that copy is refreshed with
+`go generate ./internal/server/http/swagger` (you are read-only: cannot run it).
+Read both files and compare: if they differ, flag it prominently in your report
+so the orchestrating session runs the generate step (the swagger package's
+`TestEmbeddedSpecIsInSync` also fails on drift).
