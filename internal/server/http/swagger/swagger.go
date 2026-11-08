@@ -5,15 +5,15 @@
 // adds no runtime or build dependency. It is wired into the router only when
 // SERVICE_SWAGGER_ENABLED is set, keeping the production surface documentation-free.
 //
-// Refresh the embedded spec from its source of truth with `go generate ./...`:
-//
-//	//go:generate cp ../../../../api/openapi/openapi.yaml ./openapi.yaml
+// Refresh the embedded spec from its source of truth with `go generate ./...`.
 package swagger
 
 import (
 	_ "embed"
 	"net/http"
 )
+
+//go:generate cp ../../../../api/openapi/openapi.yaml ./openapi.yaml
 
 //go:embed ui.html
 var uiHTML []byte
