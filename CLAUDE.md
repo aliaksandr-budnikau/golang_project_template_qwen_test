@@ -59,6 +59,7 @@ Common ones: `make build`, `make test`, `make lint`, `make run`, `make proto`.
 
 ## Before finishing a task
 
-- Run `make build` and `go test ./...` (and `make lint`) to confirm the default
+- Run  `make build` and `go test ./...` (and `make lint`) to confirm the default
   build is green.
 - If you touched a `.proto`, run `make proto` and rebuild with `-tags grpc`.
+
